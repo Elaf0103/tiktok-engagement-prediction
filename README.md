@@ -71,9 +71,9 @@ The competition's evaluation metric (RMSE on raw view counts) means that raw-sca
 
 ## 5. Repository Contents
 
-- `tiktok_engagement_prediction.ipynb` — full, self-contained notebook: data loading → feature engineering → local validation → model training → prediction → submission file generation. Runs top to bottom with **Restart & Run All** to reproduce the exact submission.
-- `baseline_submission.csv` — final Kaggle submission file.
-- `README.md` — this file.
+- `tiktok_engagement_prediction.ipynb` : full, self-contained notebook: data loading → feature engineering → local validation → model training → prediction → submission file generation. Runs top to bottom with **Restart & Run All** to reproduce the exact submission.
+- `baseline_submission.csv` : final Kaggle submission file.
+- `README.md` : this file.
 
 ## 6. Honest Limitations
 
