@@ -36,7 +36,7 @@ The final prediction is: `predicted_views = last_known_views × predicted_growth
 | Decision | Choice | Reason |
 |---|---|---|
 | Missing days in `engagement_daily` | Left as `NaN`, no imputation | Avoids inventing engagement numbers that were never observed |
-| Missing creator stats | Left as `NaN` | Same principle — LightGBM handles missing values natively |
+| Missing creator stats | Left as `NaN` | Same principle, LightGBM handles missing values natively |
 | Local validation | Random 5-fold `KFold` (not grouped by creator) | 97.5% of test-set creators already appear in train, so a random split mirrors the real test distribution better than a creator-grouped split |
 | Training target | `log(growth_factor)`, clipped at a minimum of 1.0 | Raw growth factor has a long right tail; training on it directly caused the model to occasionally predict wildly (and even negative) growth. Log-transforming stabilized training |
 | Sample weighting | None (tested weighting by views and views²) | Unweighted training gave the best and most stable score on both raw and log RMSE across folds |
@@ -48,10 +48,10 @@ Three hypotheses were tested going into this project, plus one feature group I a
 
 | Feature group | Hypothesis | Result (log RMSE without it, vs. 0.283 with all features) | Verdict |
 |---|---|---|---|
-| **Momentum** (`last_day_views_share`, `last_two_days_views_share`, `views_growth_day1_to_day5`) | Videos still accelerating late in the observed window keep growing after Day 5 | **0.299** (largest increase) | **Strongest signal in the whole model** — also ranked #1 and #2 in feature importance |
-| **Creator features** (follower count, gain in followers/videos/favorites over Days 0–5, views-per-follower) | A popular creator's videos take off faster; a video that outperforms its creator's usual reach ("breaks out" of the creator's normal audience) grows more | **0.289** | **Confirmed** — measurable, above-noise improvement, and several creator features rank in the top 10 by importance |
+| **Momentum** (`last_day_views_share`, `last_two_days_views_share`, `views_growth_day1_to_day5`) | Videos still accelerating late in the observed window keep growing after Day 5 | **0.299** (largest increase) | **Strongest signal in the whole model** also ranked #1 and #2 in feature importance |
+| **Creator features** (follower count, gain in followers/videos/favorites over Days 0–5, views-per-follower) | A popular creator's videos take off faster; a video that outperforms its creator's usual reach ("breaks out" of the creator's normal audience) grows more | **0.289** | **Confirmed** measurable, above-noise improvement, and several creator features rank in the top 10 by importance |
 | **Engagement rate quality** (likes/comments/shares/saves per view at Day 5) | Higher-quality engagement (not just raw views) signals a video that will keep growing | 0.283 (no measurable difference) | **Not confirmed** in this formulation, the ratios appear in the model's top features individually but removing the whole group didn't hurt accuracy |
-| **Emotion / "uncomfortable content" score** (`fear + disgust + anger + sadness`) vs. `joy` | Emotionally uncomfortable content spreads more than content that is merely funny | 0.284 (negligible difference) | **Not confirmed** — weak correlation with growth in both raw and post-Day-5 checks |
+| **Emotion / "uncomfortable content" score** (`fear + disgust + anger + sadness`) vs. `joy` | Emotionally uncomfortable content spreads more than content that is merely funny | 0.284 (negligible difference) | **Not confirmed** weak correlation with growth in both raw and post-Day-5 checks |
 
 **Other features included but not individually ablated:** raw daily engagement counts (Day 0–5, 7 metrics × 6 days), video metadata (duration, language, AI-generated flag, description word/emoji/hashtag counts, speaking rate, topic, music source, resolution, post hour/weekday).
 
